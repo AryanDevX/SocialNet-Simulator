@@ -4,7 +4,7 @@ A command-line social network simulator built in C++ using custom Graph and AVL 
 
 ---
 
-## 📘 Table of Contents
+## Table of Contents
 - [Overview](#overview)
 - [Data Structures Used](#data-structures-used)
 - [File Structure](#file-structure)
