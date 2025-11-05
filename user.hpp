@@ -20,7 +20,7 @@ public:
         return username;
     }
 
-    void addFriend(std::string f)
+    void addFriends(std::string f)
     {
         friends.insert(f);
     }
@@ -31,7 +31,7 @@ public:
     }
 
     std::unordered_set<std::string> getFriends()
-    {
+    {   
         return friends;
     }
 
@@ -42,6 +42,10 @@ public:
     void outpost(int N)
     {
         posts.outputN(N);
+    }
+
+    int getSize(){
+        return friends.size();
     }
 };
 

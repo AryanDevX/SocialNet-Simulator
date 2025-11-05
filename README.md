@@ -1,6 +1,7 @@
 # 🧑‍🤝‍🧑 SocialNet Simulator
 
-A command-line social network simulator built in C++ using custom Graph and AVL Tree implementations. Supports adding users, friendships, posts, friend suggestions, and degrees of separation — demonstrating efficient data structure design and algorithms.
+A command-line social network simulator built in C++ using custom Graph and AVL Tree implementations.  
+Now includes **comprehensive error handling** for invalid inputs, usernames with spaces, missing arguments, and more.
 
 ---
 
@@ -11,6 +12,7 @@ A command-line social network simulator built in C++ using custom Graph and AVL 
 - [Build Instructions](#build-instructions)
 - [Running the Program](#running-the-program)
 - [Supported Commands](#supported-commands)
+- [Error Handling](#error-handling)
 - [Example Usage](#example-usage)
 - [Notes](#notes)
 
@@ -31,7 +33,7 @@ The program reads and executes commands from **standard input (stdin)**.
 
 | Structure | Purpose |
 |------------|----------|
-| **Graph** | Manages users and friendships. Provides features like friend suggestions and degrees of separation. |
+| **Graph** | Manages users and friendships. Provides friend suggestions and degrees of separation. |
 | **AVL Tree** | Stores and retrieves user posts efficiently in sorted order. |
 | **HashMap (C++ STL)** | Maps usernames to graph vertices for O(1) lookups. |
 
@@ -41,12 +43,12 @@ The program reads and executes commands from **standard input (stdin)**.
 
 ```
 .
-├── main.cpp              # Entry point for the simulator
+├── main.cpp              # Entry point with command parsing & error handling
 ├── graph.hpp             # Graph class managing users and friendships
 ├── user.hpp              # User class managing user-specific data and posts
 ├── AVLTree.hpp           # AVL Tree implementation for posts
 ├── build.sh              # Shell script to compile and run the program
-└── COL106_LongAssignment_2.pdf  # Assignment description
+└── README.md             # Documentation
 ```
 
 ---
@@ -82,7 +84,7 @@ Once built, you can also run manually with:
 
 You’ll see:
 ```
-------- SocialNet Simulator -------
+---------SocialNet Simulator--------
 Enter commands (type EXIT to quit):
 ```
 
@@ -93,38 +95,63 @@ Enter commands (type EXIT to quit):
 ### 1️⃣ User Operations
 | Command | Description |
 |----------|-------------|
-| `ADD USER <username>` | Adds a new user to the network. |
-| `ADD FRIEND <username1> <username2>` | Creates a friendship between two users. |
-| `LIST FRIENDS <username>` | Displays the user’s friends alphabetically. |
+| `ADD USER <username>` | Adds a new user. Prevents usernames with spaces and duplicates. |
+| `ADD FRIEND <username1> <username2>` | Creates a friendship (must exist beforehand). Validates both usernames. |
+| `LIST FRIENDS <username>` | Lists the user’s friends alphabetically. |
 
 ---
 
 ### 2️⃣ Friend Recommendation
 | Command | Description |
 |----------|-------------|
-| `SUGGEST FRIENDS <username> <N>` | Suggests up to **N** new friends who are “friends of friends”, ranked by mutual friends (then alphabetically). |
+| `SUGGEST FRIENDS <username> <N>` | Suggests up to **N** friends-of-friends (ranked by mutual count). Validates username and N. |
 
 ---
 
 ### 3️⃣ Degrees of Separation
 | Command | Description |
 |----------|-------------|
-| `DEGREES OF SEPARATION <username1> <username2>` | Prints the shortest path length (number of friendships) between two users. Returns `-1` if no connection exists. |
+| `DEGREES OF SEPARATION <username1> <username2>` | Prints the shortest friendship path or “No connection found.” |
 
 ---
 
 ### 4️⃣ User Posts
 | Command | Description |
 |----------|-------------|
-| `ADD POST <username> "<content>"` | Adds a new post for the given user. |
-| `OUTPUT POSTS <username> <N>` | Displays the most recent **N** posts in reverse chronological order. Use `-1` to display all posts. |
+| `ADD POST <username> "<content>"` | Adds a new post. Validates username and non-empty content. |
+| `OUTPUT POSTS <username> <N>` | Displays most recent **N** posts. Validates number and username. |
 
 ---
 
 ### 5️⃣ Exit
 | Command | Description |
 |----------|-------------|
-| `EXIT` | Quits the program. |
+| `EXIT` | Exits the program safely. |
+
+---
+
+## ⚠️ Error Handling
+
+The simulator now includes **robust validation and error messages**:
+
+| Scenario | Error Message |
+|-----------|----------------|
+| Missing username in `ADD USER` | `No username provided.` |
+| Username with spaces | `Username has spaces.` |
+| Duplicate user addition | `User <username> has been already added.` |
+| Missing usernames in `ADD FRIEND` | `Provide both the usernames.` |
+| Nonexistent user in any command | `User '<username>' is not found.` |
+| Missing post content | `Provide the content for the post.` |
+| Invalid or missing number in `OUTPUT POSTS` | `Provide the number of posts to output.` |
+| Non-positive number in `OUTPUT POSTS` | `Invalid number.` |
+| Malformed SUGGEST command | `Wrong command format!` or `Invalid SUGGEST command format.` |
+| Missing keywords in DEGREES command | `Invalid command. Try again.` |
+| Any unknown command | `Invalid command. Try again.` |
+
+These validations ensure that:
+- The program **never crashes** on invalid inputs.
+- **All user errors** are clearly explained.
+- **Input spacing issues** are caught and handled gracefully.
 
 ---
 
@@ -149,13 +176,14 @@ EXIT
 
 ## 📝 Notes
 
-- Usernames are **case-insensitive**.
-- Posts are stored in **reverse chronological order** when output.
-- If a command is invalid or incomplete, an appropriate message will be shown.
+- Usernames **cannot contain spaces**.
+- Invalid commands do **not terminate** the program — they simply print an error.
+- Posts are output in **reverse chronological order**.
+- The program ensures all arguments are validated before use.
 
 ---
 
 ## 👨‍💻 Author
 **Aryan Patel**  
 *COL106 Long Assignment 2 — IIT Delhi*  
-October 2025
+November 2025

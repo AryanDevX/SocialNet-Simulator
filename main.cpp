@@ -3,55 +3,80 @@
 #include <string>
 #include "Graph.hpp"
 
-int main() {
+int main()
+{
     Graph socialNet;
     std::string line;
 
-    std::cout << "------- SocialNet Simulator -------" << std::endl;
+    std::cout << "---------SocialNet Simulator-------- " << std::endl;
     std::cout << "Enter commands (type EXIT to quit):" << std::endl;
 
-    while (std::getline(std::cin, line)) {
-        if (line.empty()) continue;
+    while (std::getline(std::cin, line))
+    {
+        if (line.empty())
+            continue;
 
         std::stringstream ss(line);
         std::string cmd;
         ss >> cmd;
 
-        if (cmd == "ADD") {
+        if (cmd == "ADD")
+        {
             std::string type;
             ss >> type;
 
-            if (type == "USER") {
-                std::string username;
+            if (type == "USER")
+            {
+                std::string username, temp;
                 ss >> username;
-
-                if (username.empty()) {
+                std::getline(ss, temp);
+                temp.erase(0, temp.find_first_not_of(' '));
+                if (username.empty())
+                {
                     std::cout << "No username provided." << std::endl;
                     continue;
                 }
+                if(!temp.empty()){
+                    std::cout << "Username has spaces" << std::endl;
+                    continue;
+                }
+                if(!socialNet.hasUser(username)){
+                    socialNet.addUser(username);
+                    std::cout << "User " << username << " has been added successfully." << std::endl;
+                }
+                else{
+                    std::cout << "User " << username << " has been already added." << std::endl;
+                }
 
-                socialNet.addUser(username);
-                std::cout << "User " << username << " has been added successfully." << std::endl;
             }
 
-            else if (type == "FRIEND") {
-                std::string u, v;
+            else if (type == "FRIEND")
+            {
+                std::string u, v, temp;
                 ss >> u >> v;
-
-                if (u.empty() || v.empty()) {
-                    std::cout << "Provide both the usernames" << std::endl;
+                std::getline(ss, temp);
+                temp.erase(0, temp.find_first_not_of(' '));
+                if (u.empty() || v.empty())
+                {
+                    std::cout << "Provide both the usernames." << std::endl;
+                    continue;
+                }
+                if(!temp.empty()){
+                    std::cout << "Username has spaces." << std::endl;
                     continue;
                 }
 
                 socialNet.addFriend(u, v);
             }
 
-            else if (type == "POST") {
-                std::string username;
-                ss >> username;
+            else if (type == "POST")
+            {
+                std::string u;
+                ss >> u;
 
-                if (!socialNet.hasUser(username)) {
-                    std::cout << "User " << username << " is not in the network." << std::endl;
+                if (!socialNet.hasUser(u))
+                {
+                    std::cout << "User " << u << " is not in the network." << std::endl;
                     continue;
                 }
 
@@ -60,61 +85,85 @@ int main() {
                 if (!content.empty() && content[0] == ' ')
                     content.erase(0, 1);
 
-                if (content.empty()) {
+                if (content.empty())
+                {
                     std::cout << "Provide the content for the post." << std::endl;
                     continue;
                 }
 
-                socialNet.getUser(username).addPost(content);
-                std::cout << "Post added for user '" << username << "." << std::endl;
+                socialNet.getUser(u).addPost(content);
+                std::cout << "Post added for user " << u << "." << std::endl;
             }
 
-            else {
+            else
+            {
                 std::cout << "Invalid ADD command." << std::endl;
             }
         }
 
-        else if (cmd == "LIST") {
-            std::string type, username;
-            ss >> type >> username;
+        else if (cmd == "LIST")
+        {
+            std::string type, u;
+            ss >> type >> u;
 
-            if (type == "FRIENDS") {
-                if (!socialNet.hasUser(username)) {
-                    std::cout << "User '" << username << " is not found." << std::endl;
+            if (type == "FRIENDS")
+            {
+                if (!socialNet.hasUser(u))
+                {
+                    std::cout << "User '" << u << " is not found." << std::endl;
                     continue;
                 }
 
-                std::cout << "Friends of " << username << ": ";
-                socialNet.listFriends(username);
-            } else {
+                std::cout << "Friends of " << u << ": ";
+                socialNet.listFriends(u);
+            }
+            else
+            {
                 std::cout << "Invalid LIST command." << std::endl;
             }
         }
 
-        else if (cmd == "SUGGEST") {
-            std::string dummy, username;
+        else if (cmd == "SUGGEST")
+        {
+            std::string type, u;
             int N;
-            ss >> dummy >> username >> N;
-
-            if (dummy != "FRIENDS") {
+            if (ss >> type >> u >> N)
+            {
+            }
+            else
+            {
+                std::cout << "Wrong command format!" << std::endl;
+                continue;
+            }
+            if (type != "FRIENDS" || N <-1)
+            {
                 std::cout << "Invalid SUGGEST command format." << std::endl;
                 continue;
             }
 
-            if (!socialNet.hasUser(username)) {
-                std::cout << "User '" << username << " is not found." << std::endl;
+            if (!socialNet.hasUser(u))
+            {
+                std::cout << "User '" << u << " is not found." << std::endl;
                 continue;
             }
-
-            std::cout << "Friend suggestions for " << username << ": ";
-            socialNet.suggestFriends(username, N);
+            std::cout << "Friend suggestions for " << u << ": ";
+            socialNet.suggestFriends(u, N);
         }
 
-        else if (cmd == "DEGREES OF SEPARATION") {
-            std::string u, v;
-            ss >> u >> v;
-
-            if (!socialNet.hasUser(u) || !socialNet.hasUser(v)) {
+        else if (cmd == "DEGREES")
+        {
+            std::string w1, w2, u, v;
+            ss >> w1 >> w2 >> u >> v;
+            if (w1 == "OF" && w2 == "SEPARATION")
+            {
+            }
+            else
+            {
+                std::cout << "Invalid command. Try again." << std::endl;
+                continue;
+            }
+            if (!socialNet.hasUser(u) || !socialNet.hasUser(v))
+            {
                 std::cout << "One or both usernames not found." << std::endl;
                 continue;
             }
@@ -126,30 +175,45 @@ int main() {
                 std::cout << "Degrees of separation between " << u << " and " << v << ": " << degree << std::endl;
         }
 
-        else if (cmd == "OUTPUT") {
-            std::string type, username;
+        else if (cmd == "OUTPUT")
+        {
+            std::string type, u;
             int N;
-            ss >> type >> username >> N;
+            ss >> type >> u;
 
-            if (type == "POSTS") {
-                if (!socialNet.hasUser(username)) {
-                    std::cout << "Username '" << username << "' not found." << std::endl;
+            if (type == "POSTS")
+            {
+                if (!socialNet.hasUser(u))
+                {
+                    std::cout << "Username '" << u << "' not found." << std::endl;
                     continue;
                 }
-
-                std::cout << "Recent " << N << " posts by " << username << ":" << std::endl;
-                socialNet.getUser(username).outpost(N);
-            } else {
-                std::cout << "Invalid OUTPUT command."  << std::endl;
+                if (!(ss >> N))
+                {
+                    std::cout << "Provide the number of posts to output." << std::endl;
+                    continue;
+                }
+                if(N<=0){
+                    std::cout << "Invalid number." << std::endl;
+                    continue;
+                }
+                std::cout << "Recent posts by " << u << ":" << std::endl;
+                socialNet.getUser(u).outpost(N);
+            }
+            else
+            {
+                std::cout << "Invalid OUTPUT command." << std::endl;
             }
         }
-        
-        else if (cmd == "EXIT") {
+
+        else if (cmd == "EXIT")
+        {
             std::cout << "Exiting SocialNet simulator..." << std::endl;
             break;
         }
 
-        else {
+        else
+        {
             std::cout << "Invalid command. Try again." << std::endl;
         }
     }
